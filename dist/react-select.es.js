@@ -1823,7 +1823,8 @@ var Select$1 = function (_React$Component) {
 						tabIndex: -1
 					},
 					menu
-				)
+				),
+				this.props.footer
 			);
 		}
 	}, {
@@ -1928,6 +1929,7 @@ Select$1.propTypes = {
 	escapeClearsValue: PropTypes.bool, // whether escape clears the value when the menu is closed
 	filterOption: PropTypes.func, // method to filter a single option (option, filterString)
 	filterOptions: PropTypes.any, // boolean to enable default filtering or function to filter the options array ([options], filterString, [values])
+	footer: PropTypes.any,
 	id: PropTypes.string, // html id to set on the input element for accessibility or tests
 	ignoreAccents: PropTypes.bool, // whether to strip diacritics when filtering
 	ignoreCase: PropTypes.bool, // whether to perform case-insensitive filtering
@@ -2298,7 +2300,7 @@ var CreatableSelect = function (_React$Component) {
 					if (onNewOptionClick) {
 						onNewOptionClick(option);
 					} else {
-						options.unshift(option);
+						options.push(option);
 
 						this.select.selectValue(option);
 					}
@@ -2347,7 +2349,7 @@ var CreatableSelect = function (_React$Component) {
 						valueKey: this.valueKey
 					});
 
-					filteredOptions.unshift(this._createPlaceholderOption);
+					filteredOptions.push(this._createPlaceholderOption);
 				}
 			}
 

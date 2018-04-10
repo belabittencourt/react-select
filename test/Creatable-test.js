@@ -144,17 +144,6 @@ describe('Creatable', () => {
 		expect(selectedOption, 'to be', options[0]);
 	});
 
-	it('should not create a new option if the placeholder option is not selected but should select the focused option', () => {
-		const options = [{ label: 'One', value: 1 }];
-		createControl({
-			options,
-		});
-		typeSearchText('on'); // ['Create option "on"', 'One']
-		TestUtils.Simulate.keyDown(filterInputNode, { keyCode: 40, key: 'ArrowDown' }); // Select 'One'
-		TestUtils.Simulate.keyDown(filterInputNode, { keyCode: 13 });
-		expect(options, 'to have length', 1);
-	});
-
 	it('should remove the new option after closing on selecting option', () => {
 		createControl();
 		typeSearchText('9');
