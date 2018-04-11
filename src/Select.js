@@ -203,6 +203,7 @@ class Select extends React.Component {
 	}
 
 	toggleTouchOutsideEvent (enabled) {
+
 		if (enabled) {
 			if (!document.addEventListener && document.attachEvent) {
 				document.attachEvent('ontouchstart', this.handleTouchOutside);
@@ -218,10 +219,28 @@ class Select extends React.Component {
 		}
 	}
 
+
+	toggleClickOutsideEvent (enabled) {
+		if (enabled) {
+			if (!document.addEventListener && document.attachEvent) {
+				document.attachEvent('click', this.handleTouchOutside);
+			} else {
+				document.addEventListener('click', this.handleTouchOutside);
+			}
+		} else {
+			if (!document.removeEventListener && document.detachEvent) {
+				document.detachEvent('click', this.handleTouchOutside);
+			} else {
+				document.removeEventListener('click', this.handleTouchOutside);
+			}
+		}
+	}
+
 	handleTouchOutside (event) {
 		// handle touch outside on ios to dismiss menu
 		if (this.wrapper && !this.wrapper.contains(event.target)) {
 			this.closeMenu();
+			this.toggleClickOutsideEvent(false);
 		}
 	}
 
@@ -359,7 +378,6 @@ class Select extends React.Component {
 		if (this.props.disabled || (event.type === 'mousedown' && event.button !== 0)) {
 			return;
 		}
-
 		event.stopPropagation();
 		event.preventDefault();
 
@@ -409,9 +427,15 @@ class Select extends React.Component {
 			return;
 		}
 
+		if (this.menuFooter && (this.menuFooter === event.relatedTarget || this.menuFooter.contains(event.relatedTarget))) {
+			this.toggleClickOutsideEvent(true);
+			return;
+		}
+
 		if (this.props.onBlur) {
 			this.props.onBlur(event);
 		}
+
 		let onBlurredState = {
 			isFocused: false,
 			isOpen: false,
@@ -420,6 +444,7 @@ class Select extends React.Component {
 		if (this.props.onBlurResetsInput) {
 			onBlurredState.inputValue = this.handleInputValueChange('');
 		}
+
 		this.setState(onBlurredState);
 	}
 
@@ -1114,7 +1139,9 @@ class Select extends React.Component {
 				>
 					{menu}
 				</div>
-				{this.props.footer}
+				{this.props.footer &&
+					<div className="Select-menu-footer" onClick={(e)=> {e.stopPropagation();}} ref={ref => this.menuFooter = ref}>{this.props.footer}</div>
+				}
 			</div>
 		);
 	}

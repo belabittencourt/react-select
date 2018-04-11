@@ -821,6 +821,7 @@ var Select$1 = function (_React$Component) {
 	}, {
 		key: 'toggleTouchOutsideEvent',
 		value: function toggleTouchOutsideEvent(enabled) {
+
 			if (enabled) {
 				if (!document.addEventListener && document.attachEvent) {
 					document.attachEvent('ontouchstart', this.handleTouchOutside);
@@ -836,11 +837,29 @@ var Select$1 = function (_React$Component) {
 			}
 		}
 	}, {
+		key: 'toggleClickOutsideEvent',
+		value: function toggleClickOutsideEvent(enabled) {
+			if (enabled) {
+				if (!document.addEventListener && document.attachEvent) {
+					document.attachEvent('click', this.handleTouchOutside);
+				} else {
+					document.addEventListener('click', this.handleTouchOutside);
+				}
+			} else {
+				if (!document.removeEventListener && document.detachEvent) {
+					document.detachEvent('click', this.handleTouchOutside);
+				} else {
+					document.removeEventListener('click', this.handleTouchOutside);
+				}
+			}
+		}
+	}, {
 		key: 'handleTouchOutside',
 		value: function handleTouchOutside(event) {
 			// handle touch outside on ios to dismiss menu
 			if (this.wrapper && !this.wrapper.contains(event.target)) {
 				this.closeMenu();
+				this.toggleClickOutsideEvent(false);
 			}
 		}
 	}, {
@@ -987,7 +1006,6 @@ var Select$1 = function (_React$Component) {
 			if (this.props.disabled || event.type === 'mousedown' && event.button !== 0) {
 				return;
 			}
-
 			event.stopPropagation();
 			event.preventDefault();
 
@@ -1040,9 +1058,15 @@ var Select$1 = function (_React$Component) {
 				return;
 			}
 
+			if (this.menuFooter && (this.menuFooter === event.relatedTarget || this.menuFooter.contains(event.relatedTarget))) {
+				this.toggleClickOutsideEvent(true);
+				return;
+			}
+
 			if (this.props.onBlur) {
 				this.props.onBlur(event);
 			}
+
 			var onBlurredState = {
 				isFocused: false,
 				isOpen: false,
@@ -1051,6 +1075,7 @@ var Select$1 = function (_React$Component) {
 			if (this.props.onBlurResetsInput) {
 				onBlurredState.inputValue = this.handleInputValueChange('');
 			}
+
 			this.setState(onBlurredState);
 		}
 	}, {
@@ -1805,8 +1830,8 @@ var Select$1 = function (_React$Component) {
 
 			return React.createElement(
 				'div',
-				{ ref: function ref(_ref5) {
-						return _this8.menuContainer = _ref5;
+				{ ref: function ref(_ref6) {
+						return _this8.menuContainer = _ref6;
 					}, className: 'Select-menu-outer', style: this.props.menuContainerStyle },
 				React.createElement(
 					'div',
@@ -1824,7 +1849,15 @@ var Select$1 = function (_React$Component) {
 					},
 					menu
 				),
-				this.props.footer
+				this.props.footer && React.createElement(
+					'div',
+					{ className: 'Select-menu-footer', onClick: function onClick(e) {
+							e.stopPropagation();
+						}, ref: function ref(_ref5) {
+							return _this8.menuFooter = _ref5;
+						} },
+					this.props.footer
+				)
 			);
 		}
 	}, {
@@ -1869,16 +1902,16 @@ var Select$1 = function (_React$Component) {
 
 			return React.createElement(
 				'div',
-				{ ref: function ref(_ref7) {
-						return _this9.wrapper = _ref7;
+				{ ref: function ref(_ref8) {
+						return _this9.wrapper = _ref8;
 					},
 					className: className,
 					style: this.props.wrapperStyle },
 				this.renderHiddenField(valueArray),
 				React.createElement(
 					'div',
-					{ ref: function ref(_ref6) {
-							return _this9.control = _ref6;
+					{ ref: function ref(_ref7) {
+							return _this9.control = _ref7;
 						},
 						className: 'Select-control',
 						onKeyDown: this.handleKeyDown,

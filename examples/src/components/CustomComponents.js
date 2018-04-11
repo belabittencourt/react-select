@@ -108,10 +108,10 @@ const UsersField = createClass({
 					placeholder={placeholder}
 					value={this.state.value}
 					valueComponent={GravatarValue}
-					footer={<div>Footer</div>}
+					footer={<button onClick={(e) => {e.preventDefault();}}>Button footer</button>}
 					/>
 				<div className="hint">
-					This example implements custom Option and Value components to render a Gravatar image for each user based on their email.
+					This example implements cu:wq!stom Option and Value components to render a Gravatar image for each user based on their email.
 					It also demonstrates rendering HTML elements as the placeholder.
 				</div>
 			</div>
