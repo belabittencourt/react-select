@@ -247,6 +247,12 @@ class Select extends React.Component {
 	focus () {
 		if (!this.input) return;
 		this.input.focus();
+
+		if(this.props.forceOpen){
+			this.setState({
+				isOpen: true
+			});
+		}
 	}
 
 	blurInput () {
@@ -386,6 +392,7 @@ class Select extends React.Component {
 	}
 
 	closeMenu () {
+		if(this.props.forceOpen) return;
 		if(this.props.onCloseResetsInput) {
 			this.setState({
 				inputValue: this.handleInputValueChange(''),
@@ -426,6 +433,8 @@ class Select extends React.Component {
 			this.focus();
 			return;
 		}
+
+		if(this.props.forceOpen) return;
 
 		if (this.menuFooter && (this.menuFooter === event.relatedTarget || this.menuFooter.contains(event.relatedTarget))) {
 			this.toggleClickOutsideEvent(true);
@@ -1293,7 +1302,8 @@ Select.propTypes = {
 	valueComponent: PropTypes.func,       // value component to render
 	valueKey: PropTypes.string,           // path of the label value in option objects
 	valueRenderer: PropTypes.func,        // valueRenderer: function (option) {}
-	wrapperStyle: PropTypes.object,       // optional style to apply to the component wrapper
+	wrapperStyle: PropTypes.object,       // optional style to apply to the component wrapper,
+	forceOpen: PropTypes.bool,
 };
 
 Select.defaultProps = {
@@ -1340,6 +1350,7 @@ Select.defaultProps = {
  	trimFilter: true,
 	valueComponent: Value,
 	valueKey: 'value',
+	forceOpen: false
 };
 
 export default Select;

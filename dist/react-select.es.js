@@ -867,6 +867,12 @@ var Select$1 = function (_React$Component) {
 		value: function focus() {
 			if (!this.input) return;
 			this.input.focus();
+
+			if (this.props.forceOpen) {
+				this.setState({
+					isOpen: true
+				});
+			}
 		}
 	}, {
 		key: 'blurInput',
@@ -1015,6 +1021,9 @@ var Select$1 = function (_React$Component) {
 	}, {
 		key: 'closeMenu',
 		value: function closeMenu() {
+			console.log("Close");
+
+			if (this.props.forceOpen) return;
 			if (this.props.onCloseResetsInput) {
 				this.setState({
 					inputValue: this.handleInputValueChange(''),
@@ -1057,6 +1066,8 @@ var Select$1 = function (_React$Component) {
 				this.focus();
 				return;
 			}
+
+			if (this.props.forceOpen) return;
 
 			if (this.menuFooter && (this.menuFooter === event.relatedTarget || this.menuFooter.contains(event.relatedTarget))) {
 				this.toggleClickOutsideEvent(true);
@@ -2016,7 +2027,8 @@ Select$1.propTypes = {
 	valueComponent: PropTypes.func, // value component to render
 	valueKey: PropTypes.string, // path of the label value in option objects
 	valueRenderer: PropTypes.func, // valueRenderer: function (option) {}
-	wrapperStyle: PropTypes.object // optional style to apply to the component wrapper
+	wrapperStyle: PropTypes.object, // optional style to apply to the component wrapper,
+	forceOpen: PropTypes.bool
 };
 
 Select$1.defaultProps = {
@@ -2062,7 +2074,8 @@ Select$1.defaultProps = {
 	tabSelectsValue: true,
 	trimFilter: true,
 	valueComponent: Value,
-	valueKey: 'value'
+	valueKey: 'value',
+	forceOpen: false
 };
 
 var propTypes = {
