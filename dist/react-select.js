@@ -718,7 +718,7 @@ var Select$1 = function (_React$Component) {
 		_this.state = {
 			inputValue: '',
 			isFocused: false,
-			isOpen: false,
+			isOpen: _this.props.forceOpen,
 			isPseudoFocused: false,
 			required: false
 		};
@@ -872,12 +872,6 @@ var Select$1 = function (_React$Component) {
 		value: function focus() {
 			if (!this.input) return;
 			this.input.focus();
-
-			if (this.props.forceOpen) {
-				this.setState({
-					isOpen: true
-				});
-			}
 		}
 	}, {
 		key: 'blurInput',
@@ -1026,8 +1020,6 @@ var Select$1 = function (_React$Component) {
 	}, {
 		key: 'closeMenu',
 		value: function closeMenu() {
-			console.log("Close");
-
 			if (this.props.forceOpen) return;
 			if (this.props.onCloseResetsInput) {
 				this.setState({
@@ -1072,7 +1064,10 @@ var Select$1 = function (_React$Component) {
 				return;
 			}
 
-			if (this.props.forceOpen) return;
+			var onBlurredState = {
+				isFocused: false,
+				isPseudoFocused: false
+			};
 
 			if (this.menuFooter && (this.menuFooter === event.relatedTarget || this.menuFooter.contains(event.relatedTarget))) {
 				this.toggleClickOutsideEvent(true);
@@ -1083,11 +1078,10 @@ var Select$1 = function (_React$Component) {
 				this.props.onBlur(event);
 			}
 
-			var onBlurredState = {
-				isFocused: false,
-				isOpen: false,
-				isPseudoFocused: false
-			};
+			if (!this.props.forceOpen) {
+				onBlurredState.isOpen = false;
+			}
+
 			if (this.props.onBlurResetsInput) {
 				onBlurredState.inputValue = this.handleInputValueChange('');
 			}
@@ -1885,7 +1879,13 @@ var Select$1 = function (_React$Component) {
 			var options = this._visibleOptions = this.filterOptions(this.props.multi && this.props.removeSelected ? valueArray : null);
 			var isOpen = this.state.isOpen;
 			if (this.props.multi && !options.length && valueArray.length && !this.state.inputValue) isOpen = false;
-			var focusedOptionIndex = this.getFocusableOptionIndex(valueArray[0]);
+
+			var focusedOptionIndex = void 0;
+			if (this.props.searchable) {
+				focusedOptionIndex = this.state.isFocused ? this.getFocusableOptionIndex(valueArray[0]) : null;
+			} else {
+				focusedOptionIndex = this.getFocusableOptionIndex(valueArray[0]);
+			}
 
 			var focusedOption = null;
 			if (focusedOptionIndex !== null) {
@@ -1979,6 +1979,7 @@ Select$1.propTypes = {
 	filterOption: PropTypes.func, // method to filter a single option (option, filterString)
 	filterOptions: PropTypes.any, // boolean to enable default filtering or function to filter the options array ([options], filterString, [values])
 	footer: PropTypes.any,
+	forceOpen: PropTypes.bool,
 	id: PropTypes.string, // html id to set on the input element for accessibility or tests
 	ignoreAccents: PropTypes.bool, // whether to strip diacritics when filtering
 	ignoreCase: PropTypes.bool, // whether to perform case-insensitive filtering
@@ -2032,8 +2033,7 @@ Select$1.propTypes = {
 	valueComponent: PropTypes.func, // value component to render
 	valueKey: PropTypes.string, // path of the label value in option objects
 	valueRenderer: PropTypes.func, // valueRenderer: function (option) {}
-	wrapperStyle: PropTypes.object, // optional style to apply to the component wrapper,
-	forceOpen: PropTypes.bool
+	wrapperStyle: PropTypes.object // optional style to apply to the component wrapper
 };
 
 Select$1.defaultProps = {
@@ -2051,6 +2051,7 @@ Select$1.defaultProps = {
 	disabled: false,
 	escapeClearsValue: true,
 	filterOptions: filterOptions,
+	forceOpen: false,
 	ignoreAccents: true,
 	ignoreCase: true,
 	inputProps: {},
@@ -2079,8 +2080,7 @@ Select$1.defaultProps = {
 	tabSelectsValue: true,
 	trimFilter: true,
 	valueComponent: Value,
-	valueKey: 'value',
-	forceOpen: false
+	valueKey: 'value'
 };
 
 var propTypes = {
